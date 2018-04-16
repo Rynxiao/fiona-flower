@@ -16,12 +16,10 @@ var $nextArrow = $('#nextArrow');
 var $sliderImgs = $('#sliderImgs');
 var $sliderContent = $('#sliderImgs .fiona-slider-content');
 var $sliderCube = $('#sliderImgs .fiona-slider-cube');
-var $description = $('#sliderCurrent .fiona-slider-description');
 
 var slider = true;
 var sliderWrapperWidth = $sliderImgs.width();
-var sliderWidth = sliderWrapperWidth * 0.9;
-var dHeight = $description.innerHeight();
+var sliderWidth = sliderWrapperWidth * 0.8;
 var loading = false;
 var index = 0;
 
@@ -132,10 +130,28 @@ function preLoadImgs() {
         desc1: '哈啊哈哈',
         desc2: '哈啊哈哈',
         date: '2018.12'
-    });
+    }, insertImageToDom);
 }
 
 preLoadImgs();
+
+function insertImageToDom(height, config) {
+    var rStr = replaceStr({
+        src: config.src,
+        width: sliderWidth,
+        height: height,
+        desc1: config.desc1,
+        desc2: config.desc2,
+        date: config.date
+    });
+
+    $sliderCurrent.children().remove();
+    $sliderCurrent.append($(rStr));
+
+    $sliderContent.css('width', sliderWidth + 'px');
+    var currentHeight = $sliderCurrent.height();
+    $sliderContent.css('height', currentHeight + 'px');
+}
 
 function replaceStr(d) {
     var imgTemplate = `
@@ -156,34 +172,15 @@ function replaceStr(d) {
         .replace(/\{\{date\}\}/g, d.date);
 }
 
-function loadImg(config) {
+function loadImg(config, fn) {
     loading = true;
     var image = new Image();
     image.onload = function() {
         loading = false;
         var width = image.width;
         var height = image.height;
-
-        if (width > 1000) {
-            width = 1000;
-        }
-
         var scaleHeight = sliderWidth * height / width;
-        var rStr = replaceStr({
-            src: config.src,
-            width: sliderWidth,
-            height: scaleHeight,
-            desc1: config.desc1,
-            desc2: config.desc2,
-            date: config.date
-        });
-        $sliderCurrent.children().remove();
-        $sliderCurrent.append($(rStr));
-
-        var currentHeight = $sliderCurrent.height();
-        console.log(currentHeight);
-        $sliderContent.css('width', sliderWidth + 'px');
-        $sliderContent.css('height', currentHeight + 'px');
+        fn && fn.call(null, scaleHeight, config);
     }
     image.src = config.src;
 }
