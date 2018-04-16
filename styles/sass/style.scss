@@ -1,3 +1,5 @@
+$boxShadow: rgba(0, 0, 0, 0.18);
+
 * {
     box-sizing: border-box;
 }
@@ -127,7 +129,7 @@ ul,li {
             transform-origin: 50% 50%;
 }
 .fiona-list-item:hover a {
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18); 
+    box-shadow: 0 5px 12px $boxShadow; 
 }
 .fiona-item-mask {
     width: 100%;
@@ -288,7 +290,7 @@ ul,li {
 }
 
 /* slider */
-.fiona-slider {
+.fiona-slider-wrapper {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -298,16 +300,16 @@ ul,li {
     bottom: 0;
     z-index: 10;
     background-color: #fff;
-    transform: translateZ(0);
+}
+.fiona-slider {
+    width: 100%;
+    height: 100%;
     display: flex;
     &-previous-arrow,
     &-next-arrow {
         position: relative;
         width: 200px;
         height: 100%;  
-    }
-    &-imgs {
-        flex: 1;
     }
     &-previous-arrow::after, 
     &-next-arrow::after {
@@ -321,18 +323,32 @@ ul,li {
                 transform: translate(-50%, -50%);
         border: 1px solid red;
     }
-    &-previous, &-current, &-next {
-        width: 900px;
-        border: 1px solid blue;
+    &-imgs {
+        position: relative;
+        flex: 1;
+    }
+    &-content {
         position: absolute;
-        left: 50%;
         top: 50%;
+        left: 50%;
         transform: translate(-50%, -50%);
+        overflow: hidden;
+    }
+    &-current {
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        & > img {
+            width: 100%;
+            display: block;
+            box-shadow: 0 5px 12px $boxShadow; 
+        }
     }
     &-description {
         display: flex;
         align-items: center;
-        padding: 0 20%;
+        padding: 20px 0;
     }
     &-brief {
         flex: 1;
