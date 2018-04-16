@@ -163,6 +163,11 @@ function loadImg(config) {
         loading = false;
         var width = image.width;
         var height = image.height;
+
+        if (width > 1000) {
+            width = 1000;
+        }
+
         var scaleHeight = sliderWidth * height / width;
         var rStr = replaceStr({
             src: config.src,
