@@ -332,7 +332,6 @@ ul,li {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        overflow: hidden;
     }
     &-current {
         width: 100%;
@@ -342,7 +341,7 @@ ul,li {
         & > img {
             width: 100%;
             display: block;
-            box-shadow: 0 5px 12px $boxShadow; 
+            box-shadow: 0 0 12px $boxShadow; 
         }
     }
     &-description {
