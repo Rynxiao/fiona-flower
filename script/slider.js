@@ -12,6 +12,8 @@ var sliderWidth = sliderWrapperWidth * 0.8;
 var loading = false;
 var index = 0;
 var documentHeight = $(document).height();
+var currentImageWidth = 0;
+var currentImageHeight = 0;
 
 var albumList = Config.albumList;
 var albumLength = albumList.length;
@@ -25,10 +27,18 @@ function preLoadImgs() {
 
 preLoadImgs();
     
-function setSliderContent(width) {
+function setSliderContent(width, height) {
+    var img = $sliderCurrent.find('img');
+    img.css({
+        width: width,
+        height: height
+    });
     $sliderContent.css('width', width + 'px');
-    var currentHeight = $sliderCurrent.height();
-    $sliderContent.css('height', currentHeight + 'px');
+    var $discription = $sliderCurrent.find('.fiona-slider-description');
+    var dHeight = $discription.height();
+
+    console.log(dHeight, height);
+    $sliderContent.css('height', height + dHeight + 'px');
 }
 
 function proxyFunc(fn) {
@@ -116,7 +126,7 @@ function insertImageToDom(width, height, config) {
 
     $sliderCurrent.children().remove();
     $sliderCurrent.append($(rStr));
-    setSliderContent(width);
+    setSliderContent(width, height);
 }
 
 function updateImageToDom(width, height, config) {
@@ -125,16 +135,11 @@ function updateImageToDom(width, height, config) {
     var d2 = $sliderCurrent.find('.fiona-slider-brief p').eq(1);
     var date = $sliderCurrent.find('.fiona-slider-date');
 
-    img.attr({
-        src: config.src,
-        width: width,
-        height: height
-    });
-
+    img.attr({ src: config.src });
     d1.text(config.desc1);
     d2.text(config.desc2);
     date.text(config.date)
-    setSliderContent(width);
+    setSliderContent(width, height);
 }
 
 function replaceStr(d) {
@@ -156,6 +161,23 @@ function replaceStr(d) {
         .replace(/\{\{date\}\}/g, d.date);
 }
 
+function caclContentWidth(width, height) {
+    var sliderWrapperWidth = $sliderImgs.width();
+    var sliderWidth = sliderWrapperWidth * 0.8;
+    var scaleWidth = sliderWidth;
+    var scaleHeight = sliderWidth * height / width;
+
+    if (scaleHeight > documentHeight) {
+        scaleHeight = documentHeight - 400;
+        scaleWidth = width * scaleHeight / height;
+    }
+
+    return {
+        scaleWidth: scaleWidth,
+        scaleHeight: scaleHeight
+    }
+}
+
 function loadImg(config, fn) {
     loading = true;
     $sliderLoading.show();
@@ -167,18 +189,31 @@ function loadImg(config, fn) {
 
         var width = image.width;
         var height = image.height;
-        var scaleWidth = sliderWidth;
-        var scaleHeight = sliderWidth * height / width;
+        var scaleLength = caclContentWidth(width, height);
 
-        if (scaleHeight > documentHeight) {
-            scaleHeight = documentHeight - 400;
-            scaleWidth = width * scaleHeight / height;
-        }
+        currentImageWidth = width;
+        currentImageHeight = height;
 
-        fn && fn.call(null, scaleWidth, scaleHeight, config);
+        fn && fn.call(null, scaleLength.scaleWidth, scaleLength.scaleHeight, config);
     }
     image.src = config.src;
 }
+
+var ticking = false;
+function onResize() {
+    if (!ticking) {
+        requestAnimationFrame(resizeImage);
+        ticking = true;
+    }
+}
+
+function resizeImage() {
+    var scaleLength = caclContentWidth(currentImageWidth, currentImageHeight);
+    setSliderContent(scaleLength.scaleWidth, scaleLength.scaleHeight);
+    ticking = false;
+}
+
+$(window).on('resize', onResize);
 
 $nextArrow.on('click', function(e) {
 
