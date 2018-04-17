@@ -4,7 +4,7 @@ var $prevArrow = $('#prevArrow');
 var $nextArrow = $('#nextArrow');
 var $sliderImgs = $('#sliderImgs');
 var $sliderContent = $('#sliderImgs .fiona-slider-content');
-var $sliderCube = $('#sliderImgs .fiona-slider-cube');
+var $sliderLoading = $('#sliderImgs .fiona-slider-loading');
 
 var slider = true;
 var sliderWrapperWidth = $sliderImgs.width();
@@ -158,9 +158,13 @@ function replaceStr(d) {
 
 function loadImg(config, fn) {
     loading = true;
+    $sliderLoading.show();
+
     var image = new Image();
     image.onload = function() {
         loading = false;
+        $sliderLoading.hide();
+
         var width = image.width;
         var height = image.height;
         var scaleWidth = sliderWidth;
@@ -177,6 +181,11 @@ function loadImg(config, fn) {
 }
 
 $nextArrow.on('click', function(e) {
+
+    if (loading) {
+        return;
+    }
+
     var pFun = proxyFunc(updateImageToDom);
     pFun.before(beforeUpdateContent, 1);
     pFun.after(afterUpdateContent, 1);
@@ -189,6 +198,10 @@ $nextArrow.on('click', function(e) {
 });
 
 $prevArrow.on('click', function(e) {
+    if (loading) {
+        return;
+    }
+
     var pFun = proxyFunc(updateImageToDom);
     pFun.before(beforeUpdateContent, -1);
     pFun.after(afterUpdateContent, -1);
