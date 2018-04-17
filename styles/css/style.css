@@ -345,6 +345,17 @@ ul, li {
   bottom: 0;
   z-index: 10;
   background-color: #fff;
+  display: none;
+}
+.fiona-slider-wrapper .fiona-slider-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50px;
+  height: 50px;
+  z-index: 11;
+  border: 1px solid red;
+  cursor: pointer;
 }
 
 @keyframes foreverRotate {

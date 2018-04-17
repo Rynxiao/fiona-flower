@@ -5,9 +5,18 @@ var $listItem = $('#album .fiona-list-item');
 var $fionaList = $('#fionaList');
 var $fionaMe = $('#fionaMe');
 var $goBack = $('#goBack');
+var $sliderClose = $('.fiona-slider-close');
+var $sliderWrapper = $('.fiona-slider-wrapper');
 
 var isFixed = false;
-var total = 9;
+var slider = false;
+var pageSize = 9;
+var page = 1;
+
+var albumList = Config.albumList;
+var albumLength = albumList.length;
+
+var total = Math.ceil(albumLength / pageSize);
 
 // bar的处理
 function fixedBar(scrollTop) {
@@ -31,20 +40,31 @@ function fixedBar(scrollTop) {
 
 // 添加
 function appendNewAlbum() {
+    var start = (page - 1) * pageSize;
+    var end = start + pageSize;
+
     var template = '<li class="fiona-list-item">'
                 + '<a href="javascript:void(0);">'
                 +    '<div class="fiona-item-mask">'
-                +        '<p>乔迁之喜</p>'
-                +        '<p>Blooming</p>'
+                +        '<p>{{desc1}}</p>'
+                +        '<p>{{desc2}}</p>'
                 +    '</div>'
                 + '</a>'
             + '</li>';
-    var result = '';
-    for (var i = 0; i < 9; i++) {
-        result += template;
+    var $images = [];
+
+    if (end >= albumLength) {
+        end = albumLength;
     }
-    total += 9;
-    $album.append($(result));
+
+    for (var i = start; i < end; i++) {
+        var imgInfo = albumList[i];
+        var $rStr = $(template.replace(/\{\{desc1\}\}/g, imgInfo.desc1).replace(/\{\{desc2\}\}/g, imgInfo.desc2));
+        $rStr.find('a').css('background-image', 'url(\''+ imgInfo.src +'\')');
+        $images.push($rStr);
+    }
+    $album.append($images);
+    page++;
 }
 
 // 动态加载图片
@@ -58,7 +78,6 @@ function loadImgOnScroll(scrollTop) {
 }
 
 document.addEventListener('scroll', function(e) {
-
     if (slider) {
         e.preventDefault();
         return false;
@@ -69,7 +88,7 @@ document.addEventListener('scroll', function(e) {
     // 顶部bar
     fixedBar(scrollTop);
 
-    if (total < 26) {
+    if (page <= total) {
         // 动态加载
         loadImgOnScroll(scrollTop);
     }
@@ -102,7 +121,18 @@ function goToBack() {
         $(document).scrollTop(scrollTop);
         raq = requestAnimationFrame(goToBack);
     }
-
 }
 
+appendNewAlbum();
+
 $goBack.on('click', goToBack);
+
+$album.on('click', 'li', function() {
+    slider = true;
+    $sliderWrapper.show();
+});
+
+$sliderClose.on('click', function() {
+    slier = false;
+    $sliderWrapper.hide();
+});

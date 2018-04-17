@@ -5,12 +5,13 @@ var $nextArrow = $('#nextArrow');
 var $sliderImgs = $('#sliderImgs');
 var $sliderContent = $('#sliderImgs .fiona-slider-content');
 var $sliderLoading = $('#sliderImgs .fiona-slider-loading');
+var $album = $('#album');
 
-var slider = true;
 var sliderWrapperWidth = $sliderImgs.width();
 var sliderWidth = sliderWrapperWidth * 0.8;
 var loading = false;
 var index = 0;
+var documentWidth = $(document).width();
 var documentHeight = $(document).height();
 var currentImageWidth = 0;
 var currentImageHeight = 0;
@@ -24,8 +25,6 @@ function preLoadImgs() {
     pFun.after(setIndexCount, 1);
     loadImg(albumList[index], pFun);
 }
-
-preLoadImgs();
     
 function setSliderContent(width, height) {
     var img = $sliderCurrent.find('img');
@@ -36,8 +35,6 @@ function setSliderContent(width, height) {
     $sliderContent.css('width', width + 'px');
     var $discription = $sliderCurrent.find('.fiona-slider-description');
     var dHeight = $discription.height();
-
-    console.log(dHeight, height);
     $sliderContent.css('height', height + dHeight + 'px');
 }
 
@@ -68,7 +65,6 @@ function proxyFunc(fn) {
 }
 
 function beforeUpdateContent(direction) {
-    console.log('direction', direction);
     if (direction > 0) {
         $prevArrow.css('opacity', 1);
     } else {
@@ -95,7 +91,9 @@ function afterUpdateContent(direction) {
 }
 
 function beforeInsertContent() {
-    $prevArrow.css('opacity', 0);
+    if (index === 0) {
+        $prevArrow.css('opacity', 0);
+    }
 }
 
 function setIndexCount(direction) {
@@ -162,7 +160,7 @@ function replaceStr(d) {
 }
 
 function caclContentWidth(width, height) {
-    var sliderWrapperWidth = $sliderImgs.width();
+    var sliderWrapperWidth = documentWidth - 400;
     var sliderWidth = sliderWrapperWidth * 0.8;
     var scaleWidth = sliderWidth;
     var scaleHeight = sliderWidth * height / width;
@@ -216,7 +214,6 @@ function resizeImage() {
 $(window).on('resize', onResize);
 
 $nextArrow.on('click', function(e) {
-
     if (loading) {
         return;
     }
@@ -247,4 +244,10 @@ $prevArrow.on('click', function(e) {
         index = albumLength - 2;
     }
     loadImg(albumList[index], pFun);
+});
+
+$album.on('mouseenter', 'li', function() {
+    var $this = $(this);
+    index = $this.index();
+    preLoadImgs();
 });
