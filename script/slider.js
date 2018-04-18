@@ -134,7 +134,7 @@ function updateImageToDom(width, height, config) {
     var date = $sliderCurrent.find('.fiona-slider-date');
 
     img.attr({ src: imagePath + config.src });
-    d1.text(config.desc1);
+    d1.text('《' + config.desc1 + '》');
     d2.text(config.desc2);
     date.text(config.date)
     setSliderContent(width, height);
@@ -154,7 +154,7 @@ function replaceStr(d) {
         .replace(/\{\{src\}\}/g, d.src)
         .replace(/\{\{width\}\}/g, d.width)
         .replace(/\{\{height\}\}/g, d.height)
-        .replace(/\{\{desc1\}\}/g, d.desc1)
+        .replace(/\{\{desc1\}\}/g, '《' + d.desc1 + '》')
         .replace(/\{\{desc2\}\}/g, d.desc2)
         .replace(/\{\{date\}\}/g, d.date);
 }
@@ -171,7 +171,6 @@ function caclContentWidth(width, height) {
 
     if (scaleHeight + dHeight + 200 > windowHeight) {
         scaleHeight = windowHeight - (300 + dHeight);
-        console.log(scaleHeight);
         scaleWidth = width * scaleHeight / height;
     }
 
