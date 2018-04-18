@@ -141,15 +141,14 @@ function updateImageToDom(width, height, config) {
 }
 
 function replaceStr(d) {
-    var imgTemplate = `
-        <img src="{{src}}" width="{{width}}" height="{{height}}" />
-        <div class="fiona-slider-description">
-            <div class="fiona-slider-brief">
-                <p>{{desc1}}</p>
-                <p>{{desc2}}</p>
-            </div>
-            <div class="fiona-slider-date">{{date}}</div>
-        </div>`;
+    var imgTemplate = '<img src="{{src}}" width="{{width}}" height="{{height}}" />'
+        + '<div class="fiona-slider-description">'
+        +    '<div class="fiona-slider-brief">'
+        +        '<p>{{desc1}}</p>'
+        +        '<p>{{desc2}}</p>'
+        +    '</div>'
+        +    '<div class="fiona-slider-date">{{date}}</div>'
+        + '</div>';
     return imgTemplate  
         .replace(/\{\{src\}\}/g, d.src)
         .replace(/\{\{width\}\}/g, d.width)

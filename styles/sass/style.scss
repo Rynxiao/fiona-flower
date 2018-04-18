@@ -1,4 +1,4 @@
-$boxShadow: rgba(0, 0, 0, 0.18);
+$boxShadow: rgba(0, 0, 0, 0.08);
 
 * {
     box-sizing: border-box;
@@ -391,7 +391,7 @@ ul,li {
         & > img {
             width: 100%;
             display: block;
-            box-shadow: 0 0 12px $boxShadow; 
+            box-shadow: 0 12px 22px $boxShadow; 
         }
     }
     &-description {

@@ -155,7 +155,7 @@ ul, li {
 }
 
 .fiona-list-item:hover a {
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.08);
 }
 
 .fiona-item-mask {
@@ -441,7 +441,7 @@ ul, li {
 .fiona-slider-current > img {
   width: 100%;
   display: block;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.08);
 }
 .fiona-slider-description {
   display: flex;
