@@ -5,27 +5,21 @@ var $listItem = $('#album .fiona-list-item');
 var $fionaList = $('#fionaList');
 var $fionaMe = $('#fionaMe');
 var $goBack = $('#goBack');
+var $sliderClose = $('.fiona-slider-close');
+var $sliderWrapper = $('.fiona-slider-wrapper');
 
 var isFixed = false;
-var total = 9;
+var slider = false;
+var previousScrollTop = 0;
+var pageSize = 9;
+var page = 1;
 
-// slider
-var $sliderCurrent = $('#sliderCurrent');
-var $prevArrow = $('#prevArrow');
-var $nextArrow = $('#nextArrow');
-var $sliderImgs = $('#sliderImgs');
-var $sliderContent = $('#sliderImgs .fiona-slider-content');
-var $sliderCube = $('#sliderImgs .fiona-slider-cube');
-var $description = $('#sliderCurrent .fiona-slider-description');
+var albumList = Config.albumList;
+var albumLength = albumList.length;
+var imagePath = 'images/resources/';
+var coverPath = imagePath + 'cover/';
 
-var slider = true;
-var sliderWrapperWidth = $sliderImgs.width();
-var sliderWidth = sliderWrapperWidth * 0.9;
-var dHeight = $description.innerHeight();
-var loading = false;
-var index = 0;
-
-var images = ['141213_Blooming.jpg', '150322_Fan.jpg', '150326_Plaisir.jpg'];
+var total = Math.ceil(albumLength / pageSize);
 
 // bar的处理
 function fixedBar(scrollTop) {
@@ -49,20 +43,31 @@ function fixedBar(scrollTop) {
 
 // 添加
 function appendNewAlbum() {
+    var start = (page - 1) * pageSize;
+    var end = start + pageSize;
+
     var template = '<li class="fiona-list-item">'
                 + '<a href="javascript:void(0);">'
                 +    '<div class="fiona-item-mask">'
-                +        '<p>乔迁之喜</p>'
-                +        '<p>Blooming</p>'
+                +        '<p>{{desc1}}</p>'
+                +        '<p>{{desc2}}</p>'
                 +    '</div>'
                 + '</a>'
             + '</li>';
-    var result = '';
-    for (var i = 0; i < 9; i++) {
-        result += template;
+    var $images = [];
+
+    if (end >= albumLength) {
+        end = albumLength;
     }
-    total += 9;
-    $album.append($(result));
+
+    for (var i = start; i < end; i++) {
+        var imgInfo = albumList[i];
+        var $rStr = $(template.replace(/\{\{desc1\}\}/g, imgInfo.desc1).replace(/\{\{desc2\}\}/g, imgInfo.desc2));
+        $rStr.find('a').css('background-image', 'url(\''+ coverPath + imgInfo.src +'\')');
+        $images.push($rStr);
+    }
+    $album.append($images);
+    page++;
 }
 
 // 动态加载图片
@@ -76,7 +81,6 @@ function loadImgOnScroll(scrollTop) {
 }
 
 document.addEventListener('scroll', function(e) {
-
     if (slider) {
         e.preventDefault();
         return false;
@@ -87,7 +91,7 @@ document.addEventListener('scroll', function(e) {
     // 顶部bar
     fixedBar(scrollTop);
 
-    if (total < 26) {
+    if (page <= total) {
         // 动态加载
         loadImgOnScroll(scrollTop);
     }
@@ -120,80 +124,49 @@ function goToBack() {
         $(document).scrollTop(scrollTop);
         raq = requestAnimationFrame(goToBack);
     }
-
 }
+
+appendNewAlbum();
 
 $goBack.on('click', goToBack);
 
-// 首先加载两张
-function preLoadImgs() {
-    loadImg({
-        src: 'images/resources/150322_Fan.jpg',
-        desc1: '哈啊哈哈',
-        desc2: '哈啊哈哈',
-        date: '2018.12'
-    });
+function fixWindow() {
+    previousScrollTop = $(document).scrollTop();
+    $('.fiona-container').addClass('fixed');
 }
 
-preLoadImgs();
-
-function replaceStr(d) {
-    var imgTemplate = `
-        <img src="{{src}}" width="{{width}}" height="{{height}}" />
-        <div class="fiona-slider-description">
-            <div class="fiona-slider-brief">
-                <p>{{desc1}}</p>
-                <p>{{desc2}}</p>
-            </div>
-            <div class="fiona-slider-date">{{date}}</div>
-        </div>`;
-    return imgTemplate  
-        .replace(/\{\{src\}\}/g, d.src)
-        .replace(/\{\{width\}\}/g, d.width)
-        .replace(/\{\{height\}\}/g, d.height)
-        .replace(/\{\{desc1\}\}/g, d.desc1)
-        .replace(/\{\{desc2\}\}/g, d.desc2)
-        .replace(/\{\{date\}\}/g, d.date);
+function resetWindow() {
+    $('.fiona-container').removeClass('fixed');
+    $(document).scrollTop(previousScrollTop);
 }
 
-function loadImg(config) {
-    loading = true;
-    var image = new Image();
-    image.onload = function() {
-        loading = false;
-        var width = image.width;
-        var height = image.height;
-        var scaleHeight = sliderWidth * height / width;
-        var rStr = replaceStr({
-            src: config.src,
-            width: sliderWidth,
-            height: scaleHeight,
-            desc1: config.desc1,
-            desc2: config.desc2,
-            date: config.date
-        });
-        $sliderCurrent.children().remove();
-        $sliderCurrent.append($(rStr));
+$album.on('click', 'li', function() {
+    var $this = $(this);
+    var offset = $this.offset();
+    var width = $this.outerWidth();
+    var height = $this.outerHeight();
 
-        var currentHeight = $sliderCurrent.height();
-        console.log(currentHeight);
-        $sliderContent.css('width', sliderWidth + 'px');
-        $sliderContent.css('height', currentHeight + 'px');
-    }
-    image.src = config.src;
-}
-
-$nextArrow.on('click', function(e) {
-    loadImg({
-        src: 'images/resources/150322_Fan.jpg',
-        desc1: '哈啊哈哈',
-        desc2: '哈啊哈哈',
-        date: '2018.12',
+    $sliderWrapper.css({
+        left: offset.left + 'px',
+        top: offset.top - $(document).scrollTop() + 'px',
+        width: width + 'px',
+        height: height + 'px',
+        opacity: 0,
+        display: 'block'
     });
+    slider = true;
+    fixWindow();
+    $sliderWrapper.animate({
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%',
+        opacity: 1
+    }, 300, 'swing');
+});
 
-    $sliderNext.css({
-        'transform': 'translateX(100%)',
-        'display': 'block'
-    });
-    $sliderCube.css('width', sliderWidth * 2 + 'px');
+$sliderClose.on('click', function() {
+    slider = false;
+    $sliderWrapper.hide();
+    resetWindow();
 });

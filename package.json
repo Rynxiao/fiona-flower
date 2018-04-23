@@ -1,0 +1,36 @@
+{
+  "name": "fiona",
+  "version": "1.0.0",
+  "description": "fiona ",
+  "main": "config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rynxiao/fiona-flower.git"
+  },
+  "keywords": [
+    "fiona"
+  ],
+  "author": "ryn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rynxiao/fiona-flower/issues"
+  },
+  "homepage": "https://github.com/Rynxiao/fiona-flower#readme",
+  "devDependencies": {
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-clean-css": "^3.9.3",
+    "gulp-imagemin": "^4.1.0",
+    "gulp-minify-html": "^1.0.6",
+    "gulp-rev": "^8.1.1",
+    "gulp-rev-collector": "^1.3.1",
+    "gulp-tap": "^1.0.1",
+    "gulp-uglify": "^3.0.0",
+    "pump": "^3.0.0",
+    "uglify-js": "^3.3.21"
+  }
+}
